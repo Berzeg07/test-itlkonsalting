@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .table td {
+        border: 1px solid black;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .add {
+        margin-bottom: 20px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <h1>Задача 1 - Структура сервисов</h1>
+
+        <ul>
+            <li>Получить список платежей: [GET] http://servername/rest/payment</li>
+            <li>Получить информацию по конкретному платежу: [GET] http://servername/rest/payment/{payment_id}/</li>
+            <li>Создать платеж: [POST] http://servername/rest/addpayment</li>
+            <li>Удалить платеж: [DELETE] http://servername/rest/remoovepayment/{payment_id}/</li>
+            <li>Отредактировать информацию по платежу: [PUT] http://servername/rest/editpayment/{payment_id}/</li>
+            <li>Получить список платежных систем для платежа: [GET] http://servername/rest/paymentslist/{payment_id}/
+            </li>
+            <li>Получить список типов платежей: [GET] http://servername/rest/paymenttypes/</li>
+            <li>Выполнить операцию "Возврат" над платежом: [PUT] http://servername/rest/returnpayment/{payment_id}/</li>
+            <li>Выполнить операцию "Аннулирование" над платежом: [PUT]
+                http://servername/rest/canselpayment/{payment_id}/
+            </li>
+        </ul>
+
+        <h1>Задача 2 - Корзина</h1>
+
+        <button class="add" @click="addToCart">Добавить</button>
+
+        <table class="table">
+            <tr>
+                <td>Товар</td>
+                <td>Стоимость</td>
+                <td>Количество</td>
+                <td></td>
+            </tr>
+            <tr v-if="basket.length">
+                <td>
+                    <select name="products" v-model="selectedProductPrice">
+                        <option v-for="(product, index) in basket" :value="product">
+                            {{product.name}}
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    {{selectedProductPrice.price}}
+                </td>
+                <td>
+                    <input type="number" v-model="selectedProductPrice.count">
+                </td>
+                <td>
+                    <button @click="deleteBasket">Удалить</button>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>Итого:</td>
+                <td>{{totalPrice}}</td>
+                <td></td>
+            </tr>
+        </table>
+
+        <p>Basket: {{ basket }}</p>
+    </div>
+
+    <h1>Задача 3 - Структуры данных</h1>
+
+    <input type="text" placeholder="Введите ID" id="wayId">
+    <input type="text" placeholder="Введите путь" id="wayName">
+    <button id="addWay">Добавить</button>
+
+
+    <table id="ways"></table>
+
+    <script>
+        let table = document.getElementById('ways'),
+            button = document.getElementById('addWay'),
+            inputID = document.getElementById('wayId'),
+            inputName = document.getElementById('wayName');
+
+        let waysObj = {};
+
+        function addWay(id, way) {
+            if (waysObj[id] == undefined) {
+                arr = [];
+                arr.push(way.toUpperCase());
+                waysObj[id] = arr;
+            } else {
+                waysObj[id].push(way.toUpperCase());
+            }
+            waysObj[id].sort();
+        }
+
+        button.addEventListener('click', function () {
+            let valueID = inputID.value;
+            let valueName = inputName.value;
+            addWay(valueID, valueName);
+
+            let item = '';
+
+            for (var key in waysObj) {
+                item += `<tr><td>${key}</td><td>${waysObj[key].join(' - ')
+                    }</td></tr>`;
+                table.innerHTML = item;
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                products: [
+                    { id: 1, name: "Картофель", price: 20, count: 1 },
+                    { id: 2, name: "Сок", price: 100, count: 2 },
+                    { id: 3, name: "Мясо", price: 500, count: 3 },
+                    { id: 4, name: "Бананы", price: 50, count: 4 }
+                ],
+                basket: [],
+                selectedProductPrice: []
+            },
+            computed: {
+                totalPrice() {
+                    let sum = 0;
+                    if (this.basket.length) {
+                        for (let i = 0; i < this.basket.length; i++) {
+                            sum = sum + parseInt(this.basket[i].price * this.basket[i].count);
+                        }
+                    }
+                    return sum;
+                }
+            },
+            methods: {
+                addToCart() {
+                    this.basket = JSON.parse(JSON.stringify(this.products));
+                    this.isAddProduct = true;
+                    this.selectedProductPrice = this.basket[0];
+                    console.log(this.basket);
+                },
+                deleteBasket() {
+                    this.basket = [];
+                }
+            }
+        });
+    </script>
+</body>
+
+
+
+</html>
