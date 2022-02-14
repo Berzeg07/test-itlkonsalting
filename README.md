@@ -9,4 +9,4 @@
 [Warmaster JS](https://github.com/Berzeg07/Warmatser-JS)
 
 ## Версия игры на Vue.js
-[Warmaster JS](https://github.com/Berzeg07/warmaster)
+[Warmaster Vue](https://github.com/Berzeg07/warmaster)
